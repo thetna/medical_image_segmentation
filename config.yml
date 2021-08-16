@@ -1,0 +1,81 @@
+device: 0
+with_HOG: False
+
+# path
+path:
+  pretrain_model:   # path to the pre-trained generator if exists
+  log: logs
+  checkpoints:
+    save_ckpt: True
+    save_val_results: True
+    ckpt_dir: checkpoint/
+    val_result_dir: val_results/
+    
+# wandb
+wandb:
+  project: miccai
+  entity: naamii
+  name: f1_base  #f1_[hog, base]_[if hog: btl, alldec, dec654321 _ bin[4, 9]_ppc_[8, 16]]_[ce: 1]_[hog: 1]
+  
+    
+
+# dataset
+datasets:
+  data_root: /raid/binod/rr/segmentation/dataset
+  fold: 1
+  train:
+    name: MICAII TRAIN
+    batch_size: 16
+    shuffle: True
+    resize: 448
+    crop: 256
+    flip: True
+    rotation: True
+    brightness: True
+    contrast: True
+    n_worker: 4
+    hog_bins: 9 #4, 
+    pix_per_cell: 8 # 8x8, 16x16
+    cells_per_block: 2 #2x2, 4x4
+    
+  valid:
+    name: MICAII TEST
+    batch_size: 1
+    n_worker: 1
+    
+    
+
+# networks
+U2Net:
+  in_ch: 3
+  out_ch: 4
+
+
+Hog_Regressor:  
+  out_dim: 3780
+  
+
+
+# training details
+
+train:
+  lr_u2net: 0.0002
+  lr_hog_reg: 0.0002
+
+  b1: 0.9
+  b2: 0.999
+  eps: 1e-08
+  weight_decay: 1e-7
+  
+  lr_steps: [100000, 150000, 200000]
+  lr_gamma: 0.5
+
+  class_wt: [1, 1, 1, 1]
+  wt_ce: 1
+  wt_hog: 1
+
+  niters: 200000
+  val_step: 1000
+
+  save_step: 20000
+  print_freq: 500

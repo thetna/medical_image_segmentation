@@ -338,75 +338,6 @@ class U2NET(nn.Module):
         self.pool56 = nn.MaxPool2d(2,stride=2,ceil_mode=True)
 
         self.stage6 = RSU4F(512,256,512)
-#hogs_regressor
-        self.hog1 = nn.Sequential(
-            nn.Conv2d(64, 128,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(128, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(256, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-        
-        self.hog2 = nn.Sequential(
-            nn.Conv2d(64, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(256, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-        
-        self.hog3 = nn.Sequential(
-            nn.Conv2d(128, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384, 3780)
-        )
-        
-        self.hog4 = nn.Sequential(
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-#             nn.Conv2d(256, 256, 3, padding=1),
-#             nn.LeakyReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384, 3780)
-        )
-        
-        self.hog5 = nn.Sequential(
-            nn.Conv2d(512, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,stride=2, ceil_mode=True),
-#             nn.Conv2d(64, 32,3, padding=1),
-#             nn.LeakyReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-        
-        self.hog6 = nn.Sequential(
-            nn.Conv2d(512, 256,3, padding=1),
-            nn.ReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-#             nn.Conv2d(64, 32,3, padding=1),
-#             nn.LeakyReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
 
         # decoder
         self.stage5d = RSU4F(1024,256,512)
@@ -453,7 +384,6 @@ class U2NET(nn.Module):
         hx6up = _upsample_like(hx6,hx5)
         
         
-        
         #-------------------- decoder --------------------
         hx5d = self.stage5d(torch.cat((hx6up,hx5),1))
         hx5dup = _upsample_like(hx5d,hx4)
@@ -496,83 +426,3 @@ class U2NET(nn.Module):
 
     
 
-##### HOG_Decoder ####
-class HOG_Decoder(nn.Module):
-
-    def __init__(self):
-        super(HOG_Decoder,self).__init__()
-
-        self.hog1 = nn.Sequential(
-            nn.Conv2d(64, 128,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(128, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(256, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-        
-        self.hog2 = nn.Sequential(
-            nn.Conv2d(64, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(256, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-        
-        self.hog3 = nn.Sequential(
-            nn.Conv2d(128, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384, 3780)
-        )
-        
-        self.hog4 = nn.Sequential(
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(4,stride=4, ceil_mode=True),
-#             nn.Conv2d(256, 256, 3, padding=1),
-#             nn.LeakyReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384, 3780)
-        )
-        
-        self.hog5 = nn.Sequential(
-            nn.Conv2d(512, 256,3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,stride=2, ceil_mode=True),
-#             nn.Conv2d(64, 32,3, padding=1),
-#             nn.LeakyReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-        
-        self.hog6 = nn.Sequential(
-            nn.Conv2d(512, 256,3, padding=1),
-            nn.ReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-#             nn.Conv2d(64, 32,3, padding=1),
-#             nn.LeakyReLU(),
-#             nn.MaxPool2d(2,stride=2, ceil_mode=True),
-            nn.Flatten(),
-            nn.Linear(16384,3780)
-        )
-
-        
-
-    def forward(self, hx1d, hx2d, hx3d, hx4d, hx5d, hx6):
-
-        return self.hog1(hx1d), self.hog2(hx2d), self.hog3(hx3d), self.hog4(hx4d), self.hog5(hx5d), self.hog6(hx6)
