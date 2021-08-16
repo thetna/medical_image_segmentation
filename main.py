@@ -16,22 +16,12 @@ from utils.utils import *
 wandb.login()
 
 set_random_seed(0)
+
 #config file
 config_path = sys.argv[1]
 cfg = load_yaml(config_path)
 
 
-results = open('results.txt', 'w')
-
-print("Writing to a file")
-
-results.write(f'Name: {cfg["wandb"]["name"]}\n')
-results.write(f'Fold: {cfg["datasets"]["fold"]} \t lr_u2net: {cfg["train"]["lr_u2net"]} \t batch_size: {cfg["datasets"]["train"]["batch_size"]}\n')
-
-if cfg["with_HOG"]:
-    results.write(f'lr_hog_reg: {cfg["train"]["lr_hog_reg"]}\t hog_dim: {cfg["Hog_Regressor"]["out_dim"]}\t hog_bins: {cfg["datasets"]["train"]["hog_bins"]}\t ppc: {cfg["datasets"]["train"]["pix_per_cell"]}\n')
-
-results.write('Iter\t BG\t VES\t TOOL\t FETUS\t MEAN\n')
 max_miou = 0
 max_mbg = 0
 max_mve = 0
@@ -39,8 +29,6 @@ max_mto = 0
 max_mfe = 0
 max_ite = 0
 
-best_u2net = None
-best_hog = None
 
 wandb_cfg = cfg['wandb']
 
@@ -52,6 +40,10 @@ setup_logger(None, cfg['path']['log'], 'train', level=logging.INFO, screen=True)
 setup_logger('val', cfg['path']['log'], 'val', level=logging.INFO)
 
 logger = logging.getLogger('base')
+logger_val = logging.getLogger('val')
+
+logger_val.info('Name: {}\n'.format(cfg["wandb"]["name"]))
+logger_val.info('Fold: {} \t lr_u2net: {} \t batch_size: {}\n'.format(cfg["datasets"]["fold"], cfg["train"]["lr_u2net"], cfg["datasets"]["train"]["batch_size"]))
 #dataset
 
 train_loader, val_loader= get_dataloader(cfg['datasets'])
@@ -64,9 +56,6 @@ opt_u2net  = optim.Adam(u2net.parameters(), lr=cfg['train']['lr_u2net'], betas=(
 
 scheduler_u2net = optim.lr_scheduler.MultiStepLR(opt_u2net, cfg['train']['lr_steps'], cfg['train']['lr_gamma'])
 
-#------------
-
-
 
 if cfg['with_HOG']:
     from models.hog_reg import HOG_Regressor
@@ -75,13 +64,13 @@ if cfg['with_HOG']:
     hog_reg = HOG_Regressor(cfg['Hog_Regressor']['out_dim'])
     hog_reg.to(cfg['device'])
     hog_reg.train()
+
+    logger_val('lr_hog_reg: {} \t hog_dim: {}\t hog_bins: {}\t ppc: {}\n'.format(cfg["train"]["lr_hog"], cfg["Hog_Regressor"]["out_dim"], cfg["datasets"]["train"]["hog_bins"], cfg["datasets"]["train"]["pix_per_cell"]))
     
     
-    opt_hog_reg  = optim.Adam(hog_reg.parameters(), lr=cfg['train']['lr_u2net'], betas=(cfg['train']['b1'], cfg['train']['b2']), eps=float(cfg['train']['eps']), weight_decay=float(cfg['train']['weight_decay']))
+    opt_hog_reg  = optim.Adam(hog_reg.parameters(), lr=cfg['train']['lr_hog'], betas=(cfg['train']['b1'], cfg['train']['b2']), eps=float(cfg['train']['eps']), weight_decay=float(cfg['train']['weight_decay']))
 
     scheduler_hog_reg = optim.lr_scheduler.MultiStepLR(opt_hog_reg, cfg['train']['lr_steps'], cfg['train']['lr_gamma'])
-
-print()
 
 current_step = 0
 
@@ -102,9 +91,9 @@ while True:
                 max_mfe = f_iou_mean.item()
                 max_ite = current_step
 
-                best_u2net = u2net
+                best_model = {'u2net': u2net}
                 if cfg["with_HOG"]:
-                    best_hog = hog_reg
+                    best_model['hog_reg'] = hog_reg
 
 
             wandb.log(
@@ -126,7 +115,7 @@ while True:
             }, 
                 step=current_step
             )
-            logger_val = logging.getLogger('val')
+
             logger_val.info('Iter:{:10d}\tmIOU: {:.4f}\tIOU_BG: {:.4f}\tIOU_Vessel: {:.4f}\tIOU_Tool: {:.4f}\tIOU_Fetus: {:.4f}'.format(current_step, fold_iou.item(), bg_iou_mean.item(), v_iou_mean.item(), t_iou_mean.item(), f_iou_mean.item()))
 
 
@@ -143,7 +132,7 @@ while True:
         if cfg['with_HOG']:
             
             opt_hog_reg.zero_grad()
-            scheduler_hog_reg.step()
+            
                         
             hog1, hog2, hog3, hog4, hog5, hog6 = hog_reg(hx1d, hx2d, hx3d, hx4d, hx5d, hx6)
 
@@ -162,7 +151,8 @@ while True:
         wandb.log({"Train/CE_loss":loss_ce.item()}, step=current_step)
         
         if cfg['with_HOG']:
-            opt_hog_reg.step()           
+            opt_hog_reg.step()  
+            scheduler_hog_reg.step()         
             wandb.log({"Train/Hog_loss":loss_hog.item()}, step=current_step)
         
         
@@ -184,13 +174,9 @@ while True:
         if cfg["train"]["niters"] < current_step:
             np.array([max_ite, max_mbg, max_mve, max_mto, max_mfe, max_miou]).tofile(results, sep="\t")
             results.close()
-
-            models = {'u2net': best_u2net}
-
-            if cfg["with_HOG"]:
-                models['hog_reg'] = best_hog
-
-            save_model(cfg, models, max_ite)
+            logger_val.info('\nBest Result\n')
+            logger_val.info('Iter:{:10d}\tmIOU: {:.4f}\tIOU_BG: {:.4f}\tIOU_Vessel: {:.4f}\tIOU_Tool: {:.4f}\tIOU_Fetus: {:.4f}'.format(max_ite, max, max_mbg, max_mve, max_mto, max_mfe))
+            save_model(cfg, best_model, max_ite)
             break
 
 

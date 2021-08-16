@@ -60,14 +60,14 @@ Hog_Regressor:
 
 train:
   lr_u2net: 0.0002
-  lr_hog_reg: 0.0002
+  lr_hog: 0.0002
 
   b1: 0.9
   b2: 0.999
   eps: 1e-08
   weight_decay: 1e-7
   
-  lr_steps: [100000, 150000, 200000]
+  lr_steps: [75000, 125000, 150000, 175000]
   lr_gamma: 0.5
 
   class_wt: [1, 1, 1, 1]
