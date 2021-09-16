@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-from utils.confusionmatrix import ConfusionMatrix
+from confusionmatrix import ConfusionMatrix
 
 
 class IoU(object):
