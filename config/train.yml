@@ -1,0 +1,90 @@
+## Config file for training
+
+
+device: 0
+seed: 2022
+
+network: U2Net+HOG # UNet, UNet+HOG, U2Net, U2Net+HOG
+dataset: Cadis # Fetreg, Cadis, Robinst
+task: 1 # 1, 2, 3
+
+# wandb
+wandb:
+  name: try
+  project: try
+  entity: naamii
+
+
+#resume
+# path
+path:
+  logs: logs
+  checkpoints:
+    models: checkpoints/models
+    val_results: checkpoints/val_results
+
+# dataset
+
+datasets:
+  train:
+    name: train_cadis_t3
+    images: /workspace/segmentation/robinst/dataset/cropped_train/instrument_dataset_1/images
+    labels: /workspace/segmentation/robinst/dataset/cropped_train/instrument_dataset_1/binary_masks
+    image_ext: jpg
+    label_ext: png
+    label_suffix: 
+    batch_size: 16
+    shuffle: True
+    resize: 448
+    patch: 256
+    augmentation: True
+    n_workers: 8
+  
+  valid:
+    name: train_cadis_t3
+    images: /workspace/segmentation/robinst/dataset/cropped_val/instrument_dataset_9/images
+    labels: /workspace/segmentation/robinst/dataset/cropped_val/instrument_dataset_9/binary_masks
+    image_ext: jpg
+    label_ext: png
+    label_suffix:
+    batch_size: 1
+    shuffle: False
+    resize: 
+    augmentation: False
+    n_workers: 1
+
+
+# networks
+seg_net:
+  in_nc: 3
+  out_nc: 2
+  resume_path: 
+
+hog_decoder:
+  out_dim: 3780
+  resume_path: 
+
+# training details
+train:
+
+  start_epoch: 0
+
+  lr_seg_net: 0.0002
+  lr_hog_dec: 0.0002
+
+  b1_seg_net: 0.9
+  b2_seg_net: 0.999
+  b1_hog_dec: 0.9
+  b2_hog_dec: 0.999
+
+  lr_steps: [75000, 125000, 175000]
+  lr_gamma: 0.5
+
+  wt_ce: 1
+  wt_mse: 1
+
+  niters: 200000
+  val_freq: 50
+
+  save_step: 500000
+  print_freq: 10
