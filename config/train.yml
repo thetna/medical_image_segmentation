@@ -15,7 +15,7 @@ wandb:
   entity: naamii
 
 
-#resume
+
 # path
 path:
   logs: logs
