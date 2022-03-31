@@ -140,11 +140,11 @@ for epoch in range(start_epoch, total_epochs):
             if hog_decoder is not None:
                 torch.save(hog_decoder.state_dict(), os.path.join(ckpt_dir, f'hog_dec_{ite_num}.pth'))
 
-            print('saved model')
+            train_logger.info('Saved Checkpoints.')
 
 
         if ite_num % opt['train']['val_freq'] == 0:
-            print('Validating')
+
             ce_val_loss, miou = eval_net(opt, seg_net, val_loader, device, ite_num)
 
             if miou.item() > best_miou:
@@ -156,8 +156,9 @@ for epoch in range(start_epoch, total_epochs):
             wandb.log({"Valid/CE_loss": ce_val_loss, 
                         "Metric/mIOU": miou.item()}, 
                         step=ite_num)
-
-            print(f'Iteration: {ite_num}\t Val_loss_ce: {ce_val_loss}\t mIOU: {miou.item()}')
+            val_logger.info('<epoch:{:3d}, iter:{:8,d}> mIOU: {:.4e} Val_loss_ce: {:.4e}'.format(
+                    epoch, ite_num, miou.item(), ce_val_loss))
+            train_logger.info(f'Iteration: {ite_num}\t mIOU: {miou.item()}\t Val_loss_ce: {ce_val_loss}')
 
         if total_iters <= ite_num:
             torch.save(seg_net.state_dict(), os.path.join(ckpt_dir, f'best_seg_net_{ite_num}.pth'))

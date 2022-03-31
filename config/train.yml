@@ -6,7 +6,7 @@ seed: 2022
 
 network: U2Net+HOG # UNet, UNet+HOG, U2Net, U2Net+HOG
 dataset: Cadis # Fetreg, Cadis, Robinst
-task: 1 # 1, 2, 3
+task: 3 # 1, 2, 3
 
 # wandb
 wandb:
@@ -28,9 +28,9 @@ path:
 datasets:
   train:
     name: train_cadis_t3
-    images: /workspace/segmentation/robinst/dataset/cropped_train/instrument_dataset_1/images
-    labels: /workspace/segmentation/robinst/dataset/cropped_train/instrument_dataset_1/binary_masks
-    image_ext: jpg
+    images: /workspace/segmentation/cataract/data/cadis/dataset/a/images
+    labels: /workspace/segmentation/cataract/data/cadis/dataset/a/labels
+    image_ext: png
     label_ext: png
     label_suffix: 
     batch_size: 16
@@ -42,9 +42,9 @@ datasets:
   
   valid:
     name: train_cadis_t3
-    images: /workspace/segmentation/robinst/dataset/cropped_val/instrument_dataset_9/images
-    labels: /workspace/segmentation/robinst/dataset/cropped_val/instrument_dataset_9/binary_masks
-    image_ext: jpg
+    images: /workspace/segmentation/cataract/data/cadis/dataset/b/images
+    labels: /workspace/segmentation/cataract/data/cadis/dataset/b/labels
+    image_ext: png
     label_ext: png
     label_suffix:
     batch_size: 1
@@ -57,7 +57,7 @@ datasets:
 # networks
 seg_net:
   in_nc: 3
-  out_nc: 2
+  out_nc: 26
   resume_path: 
 
 hog_decoder:
@@ -84,7 +84,7 @@ train:
   wt_mse: 1
 
   niters: 200000
-  val_freq: 50
+  val_freq: 500
 
-  save_step: 500000
-  print_freq: 10
+  save_step: 100000
+  print_freq: 100
