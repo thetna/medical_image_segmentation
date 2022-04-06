@@ -9,6 +9,8 @@ import logging
 from PIL import Image
 from datetime import datetime
 
+from skimage.feature import hog
+
 import torchvision.transforms.functional as TF
 from torchvision import transforms
 
@@ -85,6 +87,31 @@ def define_networks(opt):
 
     else:
         print('Network type is not defined.')
+
+def get_hog_f(img, dim):
+
+    img = img.resize((64, 128))
+
+    if dim == 3780:
+        hog_f = hog(img, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=False, multichannel=True)
+
+    elif dim == 2520:
+        hog_f = hog(img, orientations=6, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=False, multichannel=True)
+
+    elif dim == 1680:
+        hog_f = hog(img, orientations=4, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=False, multichannel=True) 
+
+    elif dim == 756:
+        hog_f = hog(img, orientations=9, pixels_per_cell=(16, 16), cells_per_block=(2, 2), visualize=False, multichannel=True) 
+
+    elif dim == 504:
+        hog_f = hog(img, orientations=6, pixels_per_cell=(16, 16), cells_per_block=(2, 2), visualize=False, multichannel=True) 
+
+    else:
+        print('HOG Dimension not defined.')  
+          
+    return torch.from_numpy(hog_f)
+
 
 def augmentation(image, mask):
     

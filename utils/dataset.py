@@ -4,8 +4,6 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 
-from skimage.feature import hog
-
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
@@ -34,12 +32,6 @@ def create_loader(dataset, opt, is_train):
             pin_memory=True)
 
 
-def get_hog_f(img):
-
-    hog_f = hog(img.resize((64, 128)), orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=False, multichannel=True)
-    
-    return torch.from_numpy(hog_f)
-
         
 def get_image_paths(img_path, image_ext):
 
@@ -53,11 +45,12 @@ def get_image_paths(img_path, image_ext):
 
 class SegDataset(Dataset):
 
-    def __init__(self, opt, dataset, task, is_train):
+    def __init__(self, opt, dataset, task, dim=None, is_train=True):
 
         self.opt = opt
         self.dataset = dataset
         self.task = task
+        self.hog_dim = dim
         self.is_train = is_train
         self.label_suffix = self.opt["label_suffix"] if self.opt["label_suffix"] is not None else ''
         
@@ -83,20 +76,22 @@ class SegDataset(Dataset):
         if self.is_train == True:
             img, mask  = transform_data(img, mask, augment=True)
 
-
-        img_copy = img.copy()
-        hog_f = get_hog_f(img_copy)
-
         image = transforms.ToTensor()(img)        
         mask = np.array(mask)
         if self.dataset == 'Cadis':
             mask = get_mask(self.task, mask)
         mask = torch.from_numpy(mask)
-        
-        return {
+
+        data = {
             'image': image.type(torch.FloatTensor),
             'mask': mask.type(torch.long),
-            'hog_f':  hog_f.type(torch.long),
-            'idx' : image_file.name
+            'idx' : image_file.stem
         }
+        
+        if self.hog_dim is not None:
+            img_copy = img.copy()
+            hog_f = get_hog_f(img_copy, self.hog_dim)
+            data['hog_f'] = hog_f.type(torch.long)
+
+        return data
         

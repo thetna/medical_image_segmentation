@@ -6,7 +6,7 @@ seed: 2022
 
 network: U2Net+HOG # UNet, UNet+HOG, U2Net, U2Net+HOG
 dataset: Cadis # Fetreg, Cadis, Robinst
-task: 3 # 1, 2, 3
+task: 2 # 1, 2, 3
 
 # wandb
 wandb:
@@ -57,11 +57,11 @@ datasets:
 # networks
 seg_net:
   in_nc: 3
-  out_nc: 26
+  out_nc: 18
   resume_path: 
 
 hog_decoder:
-  out_dim: 3780
+  out_dim: 756 # 3780, 2520, 1680, 756, 504
   resume_path: 
 
 # training details
@@ -84,7 +84,7 @@ train:
   wt_mse: 1
 
   niters: 200000
-  val_freq: 500
+  val_freq: 50
 
   save_step: 100000
-  print_freq: 100
+  print_freq: 10

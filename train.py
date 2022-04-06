@@ -1,4 +1,5 @@
 import os
+import sys
 import copy
 import math
 import wandb
@@ -18,7 +19,7 @@ from utils.utils import *
 
 
 # config_path = sys.argv[1]
-config_path = 'config/train.yml'
+config_path = sys.argv[1]
 opt = load_yaml(config_path)
 device = opt['device']
 
@@ -27,7 +28,7 @@ train_logger, val_logger = get_logger(opt['path']['logs'])
 
 for phase, dataset_opt in opt['datasets'].items():
     if phase == 'train':
-        train_set = SegDataset(dataset_opt, opt['dataset'], opt['task'], is_train=True)
+        train_set = SegDataset(dataset_opt, opt['dataset'], opt['task'], dim=opt['hog_decoder']['out_dim'], is_train=True)
         train_size = int(
             math.ceil(len(train_set) / dataset_opt['batch_size']))
         train_logger.info('Number of train images: {:,d}, iters: {:,d}'.format(

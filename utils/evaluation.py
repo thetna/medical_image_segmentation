@@ -25,7 +25,7 @@ def eval_net(opt, net, loader, device, current_step):
 
 
     for batch in tqdm(loader):
-        imgs, true_masks, idx = batch['image'], batch['mask'], batch['idx']
+        imgs, true_masks, idx = batch['image'], batch['mask'], batch['idx'][0]
 
         imgs = imgs.to(device=device)
         true_masks = true_masks.to(device=device)

@@ -75,3 +75,14 @@ Download the pre-trained weights from [here](). Add the path of images and the m
 <p align="center"><img width="100%" src="images/instrument.jpg" />Qualitative comparison between before and after applying our method on U2Net in the Task 2 of robotic instrument segmentation challenge held in
 MICCAI 2017.
 </p>
+
+# Citation
+```bash
+ @article{Bhattarai_2022_multitask,
+        author    = {Bhattarai, Binod and Subedi, Ronast and Gaire, Rebati Raman and Vazquez, Eduard and Stoyanov, Danail},
+        title     = {Histogram of Oriented Gradients Meet Deep Learning: A Novel Multi-task Deep Network for Medical Image Semantic Segmentation},
+        journal = {arXiv:2204.01712},
+        month     = {April},
+        year      = {2022}
+       }
+```
