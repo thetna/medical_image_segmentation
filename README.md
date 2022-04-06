@@ -76,12 +76,13 @@ Download the pre-trained weights from [here](). Add the path of images and the m
 MICCAI 2017.
 </p>
 
-# Citation 
-
-@article{Bhattarai_2022_multitask,
-    author    = {Bhattarai, Binod and Subedi, Ronast and Gaire, Rebati Raman and Vazquez, Eduard and Stoyanov, Danail},
-    title     = {Histogram of Oriented Gradients Meet Deep Learning: A Novel Multi-task Deep Network for Medical Image Semantic Segmentation},
-    journal = {arXiv:2204.01712},
-    month     = {April},
-    year      = {2022}
-}
+# Citation
+```bash
+ @article{Bhattarai_2022_multitask,
+        author    = {Bhattarai, Binod and Subedi, Ronast and Gaire, Rebati Raman and Vazquez, Eduard and Stoyanov, Danail},
+        title     = {Histogram of Oriented Gradients Meet Deep Learning: A Novel Multi-task Deep Network for Medical Image Semantic Segmentation},
+        journal = {arXiv:2204.01712},
+        month     = {April},
+        year      = {2022}
+       }
+```
