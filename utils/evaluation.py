@@ -19,7 +19,6 @@ def eval_net(opt, net, loader, device, current_step):
     loss_ce = 0
     miou_list = []
     save_path = opt['path']['checkpoints']['val_results']
-    print_freq = opt['train']['print_freq']
     dataset = opt['dataset']
     task = opt['task']
 

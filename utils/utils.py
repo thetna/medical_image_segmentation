@@ -153,22 +153,29 @@ def transform_data(image, mask, augment=True):
 def get_mask(task, mask):
 
     if task == 1:
-        mask = remap_mask(mask, class_remapping=class_remapping_exp1)
+        mask = remap_mask(mask, class_remapping=class_remapping_exp1, ignore_label=255)
     elif task == 2:
-        mask = remap_mask(mask, class_remapping=class_remapping_exp2)
+        mask = remap_mask(mask, class_remapping=class_remapping_exp2, ignore_label=255)
     elif task == 3:
-        mask = remap_mask(mask, class_remapping=class_remapping_exp3)
+        mask = remap_mask(mask, class_remapping=class_remapping_exp3, ignore_label=255)
     return mask
+
+def get_colormap(task):
+    if task == 1:
+        colormap = get_remapped_colormap(class_remapping_exp1)
+    elif task == 2:
+        colormap = get_remapped_colormap(class_remapping_exp2)
+    elif task == 3:
+        colormap = get_remapped_colormap(class_remapping_exp3)
+    else:
+        colormap = None
+        print('Task number not defined.')
+    return colormap
 
 def save_validation(pred, imgs, true_masks, idx, current_step, save_path_img, dataset, task):
 
     if dataset == 'Cadis':
-        if task == 1:
-            colormap = get_remapped_colormap(class_remapping_exp1)
-        elif task == 2:
-            colormap = get_remapped_colormap(class_remapping_exp2)
-        elif task == 3:
-            colormap = get_remapped_colormap(class_remapping_exp3)
+        colormap = get_colormap(task)
     
     pred_img = mask_to_colormap(pred.squeeze().float().cpu(), colormap)
     temp_inp = imgs.squeeze().float().cpu().numpy().transpose(1,2,0)*255

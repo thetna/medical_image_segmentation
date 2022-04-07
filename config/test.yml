@@ -1,0 +1,23 @@
+
+## Config file for testing
+
+device: 0
+
+dataset: Cadis # Fetreg, Cadis, Robinst
+task: 3 # 1, 2, 3
+
+path:
+  inp_path: /workspace/segmentation/cataract/data/cadis/dataset/test/Video22/Images
+  image_ext: png
+  gt_path: /workspace/segmentation/cataract/data/cadis/dataset/test/Video22/Labels
+  label_ext: png
+  label_suffix:
+
+  pred_save_path: /workspace/segmentation/test/jpt_inp
+  gt_save_path: /workspace/segmentation/test/jpt_gt
+  weight_path: /workspace/segmentation/test/models/cadis_task3_hog_96k.pth
+
+  
+network:
+  in_nc: 3
+  out_nc: 26
