@@ -78,11 +78,12 @@ MICCAI 2017.
 
 # Citation
 ```bash
- @journal{bhattarai_2023_multitask,
-        author    = {Bhattarai, Binod and Subedi, Ronast and Gaire, Rebati Raman and Vazquez, Eduard and Stoyanov, Danail},
-        title     = {Histogram of Oriented Gradients Meet Deep Learning: A Novel Multi-task Deep Network for 2D surgical image semantic segmentation}
-        journal = {Medical Image Analysis}
-        month     = {January
-        year      = {2023
-       }
+  @article{bhattarai2023histogram,
+  title={Histogram of Oriented Gradients meet deep learning: A novel multi-task deep network for 2D surgical image semantic segmentation},
+  author={Bhattarai, Binod and Subedi, Ronast and Gaire, Rebati Raman and Vazquez, Eduard and Stoyanov, Danail},
+  journal={Medical Image Analysis},
+  pages={102747},
+  year={2023},
+  publisher={Elsevier}
+}
 ```
